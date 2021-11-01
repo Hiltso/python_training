@@ -1,3 +1,7 @@
+#import matplotlib.pyplot as plt
+
+import argparse
+import sys # read arguments off the command line
 import urllib.request as req
 
 # url = 'https://raw.githubusercontent.com/COVID19Tracking/covid-tracking-data/master/data/states_daily_4pm_et.csv'
@@ -26,7 +30,7 @@ def read_csv(fname):
             # check if at first line
             values = line.strip().split(',')
             if i == 0:
-                # print debugging
+                # print debugging .
                 # print (values, rows)
                 headers = values
             else:
@@ -51,3 +55,60 @@ def filter(rows, state):
     return res
 
 
+def sortby(rows, col_name):
+    def get_col_name(row):
+        return row[col_name]
+    return sorted(rows, key=get_col_name)
+
+def get_value(rows, col_name):
+    res = []
+    for row in rows:
+        res.append(row[col_name])
+    return res
+
+# mathpotlib examples https://matplotlib.org/stable/gallery/index.html
+# cd to project folder env/scripts >>>activate. Then >>>pip install matpltlib
+
+# make a command line app
+def plot_state(state, csvname, plotname):
+    res = read_csv(csvname)
+    state_res = filter(res, state)
+    state_res = sortby(state_res, 'date')
+    fig. ax = plt.subplots()
+    ax.plot(get_value(state_res, 'positive'))
+    ax.plot(get_value(stare_res, 'deaths'))
+    ax.plot(get_value(state_res, 'hospitalized'))
+    fig.savefig(plotname)
+
+
+def main(args):
+    ap = argparse.ArgumentParser()
+    ap.add_argument('-s', '--state')
+    ap.add_argument('-c', '--csv')
+    ap.add_argument('-o', '--output',
+                    help='PNG filename')    
+    opt = ap.parse_args(args)
+    if opt.state:
+        plot_state(opt.state, opt.csv, opt.output)
+
+# to run from command line.
+# python covid.py -h
+# python covid.py -s WY -c covid.csv -o wy.png
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
+    
+else:
+    # loading this file
+    print('loading')
+    
+
+# plot_state('NY', 'covid.csv', 'ny.png')
+
+
+
+    
+    
+            
+        
+    
